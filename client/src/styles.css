@@ -356,7 +356,11 @@ kbd { background: var(--elev-2); border: 1px solid var(--line); border-radius: 5
 .yt-dock #yt-player, .yt-dock iframe { width: 100%; height: 100%; display: block; border: 0; }
 .yt-dock.off { visibility: hidden; pointer-events: none; }
 .yt-dock.mini { right: 16px; bottom: calc(var(--bar) + 8px); width: 256px; height: 144px; box-shadow: 0 12px 40px #000c; }
-.yt-expand { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; border-radius: 50%; background: #000a; display: grid; place-items: center; }
+.yt-mini-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 6px; opacity: .8; transition: opacity .15s; }
+.yt-dock.mini:hover .yt-mini-actions, .yt-mini-actions:focus-within { opacity: 1; }
+.yt-mini-actions button { width: 28px; height: 28px; border-radius: 50%; background: #000c; color: #fff; display: grid; place-items: center; }
+.yt-mini-actions button:hover { background: #000; transform: scale(1.06); }
+.close-song { color: var(--dim); }
 
 /* ---------------- overlays ---------------- */
 

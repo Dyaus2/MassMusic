@@ -30,7 +30,10 @@
     "dev": "concurrently -k -n server,web -c green,cyan \"node --watch-path=server server/index.js\" \"vite\"",
     "build": "vite build",
     "start": "node server/index.js",
-    "app": "vite build && node server/index.js --open"
+    "app": "vite build && node server/index.js --open",
+    "desktop": "vite build && electron .",
+    "dist:win": "vite build && electron-builder --win",
+    "dist:linux": "vite build && electron-builder --linux"
   },
   "engines": {
     "node": ">=22.13"
@@ -42,11 +45,64 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
     "concurrently": "^9.2.5",
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0",
     "lucide-react": "^1.63.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.6",
     "vite": "^6.4.5",
     "zustand": "^5.0.16"
+  },
+  "main": "electron/main.js",
+  "build": {
+    "appId": "com.dyaus2.massmusic",
+    "productName": "MassMusic",
+    "copyright": "Copyright (c) 2026 Dyaus2",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**",
+      "server/**",
+      "dist/**",
+      "package.json"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Audio",
+      "icon": "build/icon.png",
+      "synopsis": "Personal Spotify-style music player",
+      "artifactName": "MassMusic-${version}.${ext}"
+    },
+    "deb": {
+      "depends": []
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "MassMusic",
+      "artifactName": "MassMusic-Setup-${version}.exe",
+      "deleteAppDataOnUninstall": false
+    }
   }
 }

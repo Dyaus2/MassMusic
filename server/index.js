@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { exec } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { q, tx, getSetting, setSetting, serializeTrack, getTrack, TRACK_SELECT, ROOT_DIR, COVERS_DIR } from './db.js';
 import { scanLibrary, scanState, musicFolders, linkImportedToLocal, localMatchFor } from './library.js';
 import { ytSearch, findOnYouTube } from './youtube.js';
@@ -492,13 +493,28 @@ app.use((err, req, res, _next) => {
   res.status(err.status || 500).json({ error: err.message || 'Something went wrong' });
 });
 
-app.listen(PORT, HOST, () => {
-  const url = APP_URL;
-  console.log(`MassMusic running at ${url}${fs.existsSync(DIST) ? '' : ' (API only — run "npm run dev" for the UI)'}`);
-  if (process.argv.includes('--open')) exec(process.platform === 'win32' ? `start "" "${url}"` : `open "${url}"`);
-  fillSpotifyCovers().catch(() => {});
-  if (!getSetting('lastScan') && musicFolders().length) {
-    console.log('First run: scanning', musicFolders().join(', '));
-    runScan().catch((e) => console.error('scan failed', e));
-  }
-});
+/** Start listening. Used by `node server/index.js` and by the desktop app (electron/main.js). */
+export function startServer() {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(PORT, HOST, () => {
+      console.log(`MassMusic running at ${APP_URL}${fs.existsSync(DIST) ? '' : ' (API only — run "npm run dev" for the UI)'}`);
+      fillSpotifyCovers().catch(() => {});
+      if (!getSetting('lastScan') && musicFolders().length) {
+        console.log('First run: scanning', musicFolders().join(', '));
+        runScan().catch((e) => console.error('scan failed', e));
+      }
+      resolve({ server, url: APP_URL });
+    });
+    server.on('error', reject);
+  });
+}
+
+const runDirectly = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (runDirectly) {
+  startServer().then(({ url }) => {
+    if (process.argv.includes('--open')) exec(process.platform === 'win32' ? `start "" "${url}"` : `xdg-open "${url}"`);
+  }).catch((e) => {
+    console.error(e.code === 'EADDRINUSE' ? `Port ${PORT} is already in use. Is MassMusic already running?` : e);
+    process.exit(1);
+  });
+}

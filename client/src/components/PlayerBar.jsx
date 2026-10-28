@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, Heart,
-  Volume2, Volume1, VolumeX, ListMusic, PanelRight, Loader2,
+  Volume2, Volume1, VolumeX, ListMusic, PanelRight, Loader2, X,
 } from 'lucide-react';
 import { usePlayer, toggleLike } from '../lib/player';
 import { Cover } from './Cover';
@@ -31,6 +31,9 @@ export function PlayerBar() {
             </div>
             <button className={`icon-btn like ${t.liked ? 'on' : ''}`} onClick={() => toggleLike(t)} aria-label="Like">
               <Heart size={18} fill={t.liked ? 'currentColor' : 'none'} />
+            </button>
+            <button className="icon-btn close-song" onClick={p.close} aria-label="Close song" title="Close song">
+              <X size={18} />
             </button>
           </>
         )}

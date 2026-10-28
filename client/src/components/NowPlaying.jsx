@@ -15,6 +15,7 @@ export function YouTubeDock() {
   const active = usePlayer((s) => s.ytActive);
   const panel = usePlayer((s) => s.panel);
   const setPanel = usePlayer((s) => s.setPanel);
+  const close = usePlayer((s) => s.close);
   const [rect, setRect] = useState(null);
 
   useEffect(() => {
@@ -46,9 +47,14 @@ export function YouTubeDock() {
     <div className={`yt-dock ${active ? '' : 'off'} ${active && !rect ? 'mini' : ''}`} style={style}>
       <div id="yt-player" />
       {active && !rect && (
-        <button className="yt-expand" onClick={() => setPanel('now')} aria-label="Open Now Playing">
-          <Maximize2 size={14} />
-        </button>
+        <div className="yt-mini-actions">
+          <button onClick={() => setPanel('now')} aria-label="Open Now Playing" title="Open Now Playing">
+            <Maximize2 size={14} />
+          </button>
+          <button onClick={close} aria-label="Close song" title="Close song">
+            <X size={15} />
+          </button>
+        </div>
       )}
     </div>
   );
@@ -80,6 +86,7 @@ function NowPlayingView() {
   const index = usePlayer((s) => s.index);
   const playAt = usePlayer((s) => s.playAt);
   const openMenu = useUI((s) => s.openMenu);
+  const close = usePlayer((s) => s.close);
   const next = queue[index + 1];
 
   if (!t) {
@@ -110,7 +117,10 @@ function NowPlayingView() {
           </dd>
           {t.durationMs ? (<><dt>Length</dt><dd>{msClock(t.durationMs)}</dd></>) : null}
         </dl>
-        <button className="btn ghost small" onClick={(e) => openMenu(e, trackMenuItems(t))}>More options</button>
+        <div className="row">
+          <button className="btn ghost small" onClick={(e) => openMenu(e, trackMenuItems(t))}>More options</button>
+          <button className="btn ghost small" onClick={close}><X size={14} /> Close song</button>
+        </div>
       </div>
       {next && (
         <div className="rp-card">

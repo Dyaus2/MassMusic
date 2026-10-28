@@ -161,6 +161,23 @@ export const usePlayer = create((set, get) => ({
     persist();
   },
 
+  /** Stop playback and close the current song (clears the player and the queue). */
+  close() {
+    ++loadSeq; // cancel any song that is still loading
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    yt?.stopVideo?.();
+    mode = null;
+    set({ queue: [], original: null, index: -1, context: null, playing: false, loading: false, position: 0, duration: 0, ytActive: false });
+    persist();
+    document.title = 'MassMusic';
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.playbackState = 'none';
+    }
+  },
+
   clearUpcoming() {
     const { queue, index } = get();
     set({ queue: queue.slice(0, index + 1) });

@@ -7,7 +7,8 @@
   <img alt="React 18" src="https://img.shields.io/badge/react-18-61dafb?logo=react&logoColor=black">
   <img alt="Vite 6" src="https://img.shields.io/badge/vite-6-646cff?logo=vite&logoColor=white">
   <img alt="SQLite" src="https://img.shields.io/badge/sqlite-built--in-003b57?logo=sqlite&logoColor=white">
-  <img alt="Platform: Windows" src="https://img.shields.io/badge/platform-windows-0078d4">
+  <img alt="Platform: Windows and Linux" src="https://img.shields.io/badge/platform-windows%20%7C%20linux-0078d4">
+  <img alt="Electron 45" src="https://img.shields.io/badge/electron-45-47848f?logo=electron&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-2ee68a">
 </p>
 
@@ -22,7 +23,8 @@
 
 - **One library, two sources.** Your MP3, FLAC, M4A, OGG, OPUS and WAV files play straight from disk. Anything you don't own plays through YouTube's official embedded player.
 - **Bring your Spotify playlists.** Paste a link, connect your account, or drop in a CSV. Songs you already have as files are matched automatically; the rest are found on YouTube the first time you play them.
-- **Feels like the real thing.** Home with recently played and "on repeat", search, Liked Songs, playlists with drag-to-reorder, a queue, shuffle, repeat, and a Now Playing panel with the video.
+- **Feels like the real thing.** Home with recently played and "on repeat", search, Liked Songs, playlists with drag-to-reorder, a queue, shuffle, repeat, a Now Playing panel with the video, and a mini player you can close.
+- **A real desktop app.** Runs in its own window on Windows and Linux, with a Desktop shortcut and media-key support.
 - **Yours only.** No account or cloud. Everything is stored in one local SQLite file, and the server only listens on your own machine.
 
 ## Screenshots
@@ -43,18 +45,24 @@
 
 ## Getting started
 
-You need [Node.js](https://nodejs.org) 22.13 or newer (MassMusic uses the built-in `node:sqlite`, so there's nothing native to compile).
+MassMusic runs as a **desktop app** in its own window (built with [Electron](https://www.electronjs.org)), so no browser is needed.
 
-**On Windows:** download or clone the repo and double-click **`MassMusic.bat`**. The first run installs and builds everything, then opens <http://localhost:4545>.
+### Build and install the desktop app
 
-**From a terminal:**
+You need [Node.js](https://nodejs.org) 22.13 or newer.
 
 ```bash
 git clone https://github.com/Dyaus2/MassMusic.git
 cd MassMusic
 npm install
-npm run app
 ```
+
+| System | Command | Result |
+| --- | --- | --- |
+| **Windows** | `npm run dist:win` | `release/MassMusic-Setup-<version>.exe`. Run it to install MassMusic for your user (no admin rights needed) with a Desktop and Start-menu shortcut. |
+| **Linux** | `npm run dist:linux` (run on Linux) | `release/MassMusic-<version>.AppImage` and a `.deb` package. |
+
+To try it without packaging, run `npm run desktop`.
 
 Then:
 
@@ -62,8 +70,18 @@ Then:
 2. Open **Import playlists** and paste a Spotify playlist link.
 3. Press play.
 
+The desktop app keeps your library in your user data folder (`%APPDATA%\MassMusic\data` on Windows, `~/.config/MassMusic/data` on Linux), so it survives reinstalls.
+
+### Run it in a browser instead
+
+```bash
+npm run app          # builds the UI and opens http://localhost:4545
+```
+
+On Windows you can also double-click **`MassMusic.bat`**. This mode keeps its library in the project's `data/` folder.
+
 > [!IMPORTANT]
-> Always open the app at `http://localhost:4545`, not `http://127.0.0.1:4545`. YouTube blocks most music in players embedded on pages served from a raw IP address. MassMusic redirects you automatically.
+> In browser mode, always open `http://localhost:4545`, not `http://127.0.0.1:4545`. YouTube blocks most music in players embedded on pages served from a raw IP address. MassMusic redirects you automatically, and the desktop app always uses `localhost`.
 
 ## Importing from Spotify
 
@@ -108,21 +126,25 @@ Matches are saved, so each song is only looked up once. If a match is wrong, pic
 | <kbd>Ctrl</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | Volume |
 | <kbd>Ctrl</kbd> + <kbd>K</kbd> | Search |
 | <kbd>M</kbd> · <kbd>S</kbd> · <kbd>R</kbd> | Mute · shuffle · repeat |
+| <kbd>F11</kbd> | Full screen (desktop app) |
 
 Your keyboard's media keys work too.
 
 ## Project layout
 
 ```text
+electron/     Desktop app wrapper (window, starts the server)
 server/       Express API: library scanner, SQLite, YouTube search, Spotify import
 client/src/   React app: pages, components, and the player engine (lib/player.js)
 docs/         README images
-data/         Created on first run: database and cover art (git-ignored)
+data/         Browser mode only: database and cover art (git-ignored)
 ```
 
 | Command | What it does |
 | --- | --- |
-| `npm run app` | Build the UI and start MassMusic |
+| `npm run desktop` | Build the UI and open the desktop app |
+| `npm run dist:win` / `dist:linux` | Package the desktop app (installer / AppImage + deb) |
+| `npm run app` | Build the UI and open MassMusic in your browser |
 | `npm start` | Start the server (serves the last build) |
 | `npm run dev` | Hot-reload development on <http://localhost:5173> |
 
