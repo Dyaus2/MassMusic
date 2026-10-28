@@ -1,0 +1,52 @@
+{
+  "name": "massmusic",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal Spotify-style music player: local files, YouTube, and Spotify playlist import",
+  "author": "Dyaus2",
+  "license": "MIT",
+  "homepage": "https://github.com/Dyaus2/MassMusic#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dyaus2/MassMusic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Dyaus2/MassMusic/issues"
+  },
+  "keywords": [
+    "music-player",
+    "spotify",
+    "spotify-clone",
+    "playlist-import",
+    "youtube",
+    "react",
+    "vite",
+    "express",
+    "sqlite",
+    "self-hosted"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c green,cyan \"node --watch-path=server server/index.js\" \"vite\"",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "app": "vite build && node server/index.js --open"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "music-metadata": "^12.3.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^9.2.5",
+    "lucide-react": "^1.63.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.6",
+    "vite": "^6.4.5",
+    "zustand": "^5.0.16"
+  }
+}
