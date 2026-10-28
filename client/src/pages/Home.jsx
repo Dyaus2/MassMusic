@@ -7,6 +7,7 @@ import { greeting, plural } from '../lib/format';
 import { PlaylistCover } from '../components/Cover';
 import { Shelf, TrackCard, PlaylistCard } from '../components/Header';
 import { useLibrary } from '../lib/ui';
+import { DailyPicks } from '../components/DailyPicks';
 
 function QuickTile({ to, playlist, name, loadTracks }) {
   return (
@@ -70,6 +71,8 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <DailyPicks compact />
 
       {data?.recent.length > 0 && (
         <Shelf title="Recently played">

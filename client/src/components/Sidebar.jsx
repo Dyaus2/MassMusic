@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Search, Import, Plus, Library, Settings, Volume2 } from 'lucide-react';
+import { Home, Search, Import, Plus, Library, Settings, Volume2, Sparkles } from 'lucide-react';
 import { useLibrary, refreshPlaylists, toast } from '../lib/ui';
 import { usePlayer } from '../lib/player';
 import { api } from '../lib/api';
@@ -67,6 +67,7 @@ export function Sidebar() {
         </div>
         <NavLink to="/" end className="nav-link"><Home size={22} /> Home</NavLink>
         <NavLink to="/search" className="nav-link"><Search size={22} /> Search</NavLink>
+        <NavLink to="/for-you" className="nav-link"><Sparkles size={22} /> For You</NavLink>
         <NavLink to="/import" className="nav-link"><Import size={22} /> Import playlists</NavLink>
       </div>
 

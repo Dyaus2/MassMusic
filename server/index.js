@@ -9,6 +9,7 @@ import { ytSearch, findOnYouTube } from './youtube.js';
 import { fetchSpotifyPublic, parseCsvTracks, parseTextTracks, spotifyTrackCover } from './importers.js';
 import * as spotify from './spotify.js';
 import { splitYouTubeTitle, matchKey } from './util.js';
+import { registerRecRoutes, startRecScheduler } from './recs/engine.js';
 
 const PORT = Number(process.env.PORT) || 4545;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -292,7 +293,8 @@ app.delete('/api/playlists/:id', (req, res) => {
     q.run('DELETE FROM playlists WHERE id = :id', { id });
     // imported songs that no longer belong anywhere and aren't liked can go
     q.run(`DELETE FROM tracks WHERE source = 'external'
-           AND id NOT IN (SELECT track_id FROM playlist_tracks) AND id NOT IN (SELECT track_id FROM likes)`);
+           AND id NOT IN (SELECT track_id FROM playlist_tracks) AND id NOT IN (SELECT track_id FROM likes)
+           AND id NOT IN (SELECT track_id FROM recommendations WHERE track_id IS NOT NULL)`);
   });
   res.json({ ok: true });
 });
@@ -480,6 +482,10 @@ app.post('/api/library/scan', (req, res) => {
 });
 app.get('/api/library/scan', (req, res) => res.json(scanState));
 
+/* ---------------- daily recommendations ---------------- */
+
+registerRecRoutes(app, wrap);
+
 /* ---------------- web app ---------------- */
 
 if (fs.existsSync(DIST)) {
@@ -499,6 +505,7 @@ export function startServer() {
     const server = app.listen(PORT, HOST, () => {
       console.log(`MassMusic running at ${APP_URL}${fs.existsSync(DIST) ? '' : ' (API only — run "npm run dev" for the UI)'}`);
       fillSpotifyCovers().catch(() => {});
+      startRecScheduler();
       if (!getSetting('lastScan') && musicFolders().length) {
         console.log('First run: scanning', musicFolders().join(', '));
         runScan().catch((e) => console.error('scan failed', e));

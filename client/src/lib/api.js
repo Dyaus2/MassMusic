@@ -52,6 +52,14 @@ export const api = {
   spotifyLogout: () => post('/api/spotify/logout'),
   spotifyPlaylists: () => get('/api/spotify/playlists'),
 
+  recsToday: () => get('/api/recs/today'),
+  recsRetry: () => post('/api/recs/retry'),
+  recsRate: (id, stars) => put(`/api/recs/${id}/rating`, { stars }),
+  recsClearRating: (id) => del(`/api/recs/${id}/rating`),
+  recsKnown: (id, known) => put(`/api/recs/${id}/known`, { known }),
+  recsHistory: () => get('/api/recs/history'),
+  recsStats: () => get('/api/recs/stats'),
+
   settings: () => get('/api/settings'),
   saveSettings: (data) => put('/api/settings', data),
   scan: () => post('/api/library/scan'),

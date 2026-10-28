@@ -11,6 +11,7 @@ import SearchPage from './pages/Search';
 import PlaylistPage from './pages/Playlist';
 import ImportPage from './pages/Import';
 import SettingsPage from './pages/Settings';
+import ForYou from './pages/ForYou';
 import { LikedSongs, LocalFiles, LibraryPage } from './pages/Collections';
 
 function useShortcuts() {
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/local" element={<LocalFiles />} />
             <Route path="/playlist/:id" element={<PlaylistPage key={location.pathname} />} />
             <Route path="/import" element={<ImportPage />} />
+            <Route path="/for-you" element={<ForYou />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<Home />} />
           </Routes>
